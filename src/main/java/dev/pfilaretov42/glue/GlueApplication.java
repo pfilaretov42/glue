@@ -11,15 +11,21 @@ import java.awt.*;
 @SpringBootApplication
 public class GlueApplication implements CommandLineRunner {
 
+    // TODO - move constants?
     public static final Color COLOR_LIFE = Color.ORANGE;
     public static final Color COLOR_NO_LIFE = Color.LIGHT_GRAY;
+    public static final int ROWS = 10;
+    public static final int COLUMNS = 10;
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(GlueApplication.class).headless(false).run(args);
     }
 
     @Autowired
-    private LifeActionListener lifeActionListener;
+    private LifeField lifeField;
+
+    @Autowired
+    private StartActionListener startActionListener;
 
     @Override
     public void run(String... args) {
@@ -31,27 +37,8 @@ public class GlueApplication implements CommandLineRunner {
         frame.setResizable(false);
 
         // field
-        JPanel fieldPanel = new JPanel(new GridLayout(10, 10, 3, 3));
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                JButton button = new JButton();
-                fieldPanel.add(button);
-
-                button.setFocusable(false);
-                // this is how background is set:
-                button.setOpaque(true);
-                button.setBorderPainted(false);
-
-                // initial state of the field
-                if (i == j && i > 2 && i < 7) {
-                    button.setBackground(COLOR_LIFE);
-                } else {
-                    button.setBackground(COLOR_NO_LIFE);
-                }
-
-                button.addActionListener(lifeActionListener);
-            }
-        }
+        JPanel fieldPanel = new JPanel(new GridLayout(ROWS, COLUMNS, 3, 3));
+        lifeField.init(fieldPanel);
 
         // controls
         JPanel controlPanel = new JPanel(new GridLayout(1, 3));
@@ -60,14 +47,19 @@ public class GlueApplication implements CommandLineRunner {
         JButton startButton = new JButton();
         controlPanel.add(startButton);
         startButton.setText("Start");
+        startButton.addActionListener(startActionListener);
 
         JButton stopButton = new JButton();
         controlPanel.add(stopButton);
         stopButton.setText("Stop");
+        // TODO
+//        stopButton.addActionListener();
 
         JButton resetButton = new JButton();
         controlPanel.add(resetButton);
         resetButton.setText("Reset");
+        // TODO
+//        resetButton.addActionListener();
 
         // add panels
         frame.add(controlPanel, BorderLayout.NORTH);
