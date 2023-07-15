@@ -1,5 +1,6 @@
 package dev.pfilaretov42.glue;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -10,9 +11,15 @@ import java.awt.*;
 @SpringBootApplication
 public class GlueApplication implements CommandLineRunner {
 
+    public static final Color COLOR_LIFE = Color.ORANGE;
+    public static final Color COLOR_NO_LIFE = Color.LIGHT_GRAY;
+
     public static void main(String[] args) {
         new SpringApplicationBuilder(GlueApplication.class).headless(false).run(args);
     }
+
+    @Autowired
+    private LifeActionListener lifeActionListener;
 
     @Override
     public void run(String... args) {
@@ -37,10 +44,12 @@ public class GlueApplication implements CommandLineRunner {
 
                 // initial state of the field
                 if (i == j && i > 2 && i < 7) {
-                    button.setBackground(Color.ORANGE);
+                    button.setBackground(COLOR_LIFE);
                 } else {
-                    button.setBackground(Color.LIGHT_GRAY);
+                    button.setBackground(COLOR_NO_LIFE);
                 }
+
+                button.addActionListener(lifeActionListener);
             }
         }
 
