@@ -13,20 +13,21 @@ public class GlueApplication implements CommandLineRunner {
     // TODO - move constants?
     public static final Color COLOR_LIFE = Color.ORANGE;
     public static final Color COLOR_NO_LIFE = Color.LIGHT_GRAY;
-    public static final int ROWS = 20;
-    public static final int COLUMNS = 20;
+    public static final int ROWS = 130;
+    public static final int COLUMNS = 160;
     public static final int WINDOW_SIZE = 1000;
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(GlueApplication.class).headless(false).run(args);
     }
 
-    private final LifeBoard lifeBoard;
+    private final BoardTextArea boardTextArea;
     private final StartButton startButton;
     private final HiddenContinueButton hiddenContinueButton;
 
-    public GlueApplication(LifeBoard lifeBoard, StartButton startButton, HiddenContinueButton hiddenContinueButton) {
-        this.lifeBoard = lifeBoard;
+    public GlueApplication(
+            BoardTextArea boardTextArea, StartButton startButton, HiddenContinueButton hiddenContinueButton) {
+        this.boardTextArea = boardTextArea;
         this.startButton = startButton;
         this.hiddenContinueButton = hiddenContinueButton;
     }
@@ -40,9 +41,9 @@ public class GlueApplication implements CommandLineRunner {
         frame.setLayout(new BorderLayout());
         frame.setResizable(false);
 
-        // field
-        JPanel fieldPanel = new JPanel(new GridLayout(ROWS, COLUMNS, 3, 3));
-        lifeBoard.init(fieldPanel);
+        // board
+        JPanel textBoardPanel = new JPanel(new BorderLayout());
+        textBoardPanel.add(boardTextArea);
 
         // controls
         JPanel controlPanel = new JPanel(new GridLayout(1, 3));
@@ -65,7 +66,7 @@ public class GlueApplication implements CommandLineRunner {
 
         // add panels
         frame.add(controlPanel, BorderLayout.NORTH);
-        frame.add(fieldPanel);
+        frame.add(textBoardPanel);
         frame.setVisible(true);
     }
 }

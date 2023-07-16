@@ -9,6 +9,7 @@ public abstract class StartActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof JButton) {
+            // TODO - disable Start button
             getLifeCalculator().execute();
         }
     }

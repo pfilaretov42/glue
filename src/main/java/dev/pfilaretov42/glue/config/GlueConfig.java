@@ -13,8 +13,9 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 public class GlueConfig {
     @Bean
     @Scope(SCOPE_PROTOTYPE)
-    public LifeCalculator lifeCalculator(LifeBoard lifeBoard, StartActionListener startActionListener) {
-        return new LifeCalculator(lifeBoard) {
+    public LifeCalculator lifeCalculator(
+            LifeBoard lifeBoard, BoardTextArea boardTextArea, StartActionListener startActionListener) {
+        return new LifeCalculator(lifeBoard, boardTextArea) {
             @Override
             protected JButton getContinueButton() {
                 return hiddenContinueButton(startActionListener);
@@ -23,11 +24,11 @@ public class GlueConfig {
     }
 
     @Bean
-    public StartActionListener startActionListener(LifeBoard lifeBoard) {
+    public StartActionListener startActionListener(LifeBoard lifeBoard, BoardTextArea boardTextArea) {
         return new StartActionListener() {
             @Override
             protected LifeCalculator getLifeCalculator() {
-                return lifeCalculator(lifeBoard, this);
+                return lifeCalculator(lifeBoard, boardTextArea, this);
             }
         };
     }

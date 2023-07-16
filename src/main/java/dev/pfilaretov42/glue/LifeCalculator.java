@@ -8,71 +8,65 @@ import java.awt.*;
 
 import static dev.pfilaretov42.glue.GlueApplication.*;
 
-public abstract class LifeCalculator extends SwingWorker<Color[][], Void> {
+public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private static final Logger LOG = LoggerFactory.getLogger(LifeCalculator.class);
 
-    private final LifeButton[][] board;
+    private final Cell[][] board;
+    private final BoardTextArea boardTextArea;
 
-    protected LifeCalculator(LifeBoard lifeBoard) {
+    protected LifeCalculator(LifeBoard lifeBoard, BoardTextArea boardTextArea) {
         this.board = lifeBoard.getBoard();
+        this.boardTextArea = boardTextArea;
     }
 
     @Override
-    protected Color[][] doInBackground() throws InterruptedException {
+    protected Cell[][] doInBackground() throws InterruptedException {
         // TODO - lock/synchronise field access?
 
-        Color[][] colors = new Color[ROWS][COLUMNS];
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
-                /*
-                 * If the cell is alive, then it stays alive if it has either 2 or 3 live neighbors
-                 * If the cell is dead, then it springs to life only in the case that it has 3 live neighbors
-                 */
-
                 int liveNeighboursCount = countLiveNeighbours(i, j);
-                if (board[i][j].isCurrentlyAlive()) {
-                    if (liveNeighboursCount != 2 && liveNeighboursCount != 3) {
-                        // becomes dead
-                        board[i][j].setFutureAlive(false);
-                    }
-                } else {
-                    if (liveNeighboursCount == 3) {
-                        // becomes alive
-                        board[i][j].setFutureAlive(true);
-                    }
-                }
-
-                colors[i][j] = board[i][j].isFutureAlive() ? COLOR_LIFE : COLOR_NO_LIFE;
+                updateFutureCellStatus(i, j, liveNeighboursCount);
             }
         }
 
-        for (LifeButton[] buttons : board) {
-            for (LifeButton button : buttons) {
-                button.updateCurrentAliveStatus();
+        for (Cell[] rows : board) {
+            for (Cell cell : rows) {
+                cell.updateCurrentAliveStatus();
             }
         }
 
-        // TODO - move 500 to properties - initial speed
-        Thread.sleep(500);
+        // TODO - move value to properties - initial speed
+        Thread.sleep(0);
 
-        return colors;
+        return board;
     }
 
     @Override
     protected void done() {
         try {
-            // TODO - move set background to LifeButton class
-
-            Color[][] colors = get();
-            for (int i = 0; i < ROWS; i++) {
-                for (int j = 0; j < COLUMNS; j++) {
-                    board[i][j].setBackground(colors[i][j]);
-                }
-            }
-
+            boardTextArea.updateView(get());
             getContinueButton().doClick();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void updateFutureCellStatus(int i, int j, int liveNeighboursCount) {
+        /*
+         * If the cell is alive, then it stays alive if it has either 2 or 3 live neighbors
+         * If the cell is dead, then it springs to life only in the case that it has 3 live neighbors
+         */
+        if (board[i][j].isCurrentlyAlive()) {
+            if (liveNeighboursCount != 2 && liveNeighboursCount != 3) {
+                // becomes dead
+                board[i][j].setFutureAlive(false);
+            }
+        } else {
+            if (liveNeighboursCount == 3) {
+                // becomes alive
+                board[i][j].setFutureAlive(true);
+            }
         }
     }
 

@@ -1,12 +1,10 @@
 package dev.pfilaretov42.glue;
 
-import javax.swing.*;
-
-public class LifeButton extends JButton {
+public class Cell {
     private boolean isCurrentlyAlive;
     private boolean isFutureAlive;
 
-    public LifeButton(boolean isCurrentlyAlive) {
+    public Cell(boolean isCurrentlyAlive) {
         this.isCurrentlyAlive = isCurrentlyAlive;
         isFutureAlive = isCurrentlyAlive;
     }
