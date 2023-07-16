@@ -1,1 +1,4 @@
-
+spring:
+  main:
+    # TODO - remove it
+    allow-circular-references: true

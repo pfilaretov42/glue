@@ -26,7 +26,7 @@ public class GlueApplication implements CommandLineRunner {
     private LifeBoard lifeBoard;
 
     @Autowired
-    private StartActionListener startActionListener;
+    private StartButton startButton;
 
     @Override
     public void run(String... args) {
@@ -45,10 +45,7 @@ public class GlueApplication implements CommandLineRunner {
         JPanel controlPanel = new JPanel(new GridLayout(1, 3));
         controlPanel.setBounds(0, 0, WINDOW_SIZE, 100);
 
-        JButton startButton = new JButton();
         controlPanel.add(startButton);
-        startButton.setText("Start");
-        startButton.addActionListener(startActionListener);
 
         JButton stopButton = new JButton();
         controlPanel.add(stopButton);

@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static dev.pfilaretov42.glue.GlueApplication.*;
 
@@ -31,10 +29,10 @@ public class LifeBoard {
                 int columnOffset = 5;
                 boolean isAlive =
                         (i == ROWS - 1 - rowOffset && j == COLUMNS - 2 - columnOffset) ||
-                        (i == ROWS - 2 - rowOffset && j == COLUMNS - 3 - columnOffset) ||
-                        (i == ROWS - 3 - rowOffset && j == COLUMNS - 1 - columnOffset) ||
-                        (i == ROWS - 3 - rowOffset && j == COLUMNS - 2 - columnOffset) ||
-                        (i == ROWS - 3 - rowOffset && j == COLUMNS - 3 - columnOffset);
+                                (i == ROWS - 2 - rowOffset && j == COLUMNS - 3 - columnOffset) ||
+                                (i == ROWS - 3 - rowOffset && j == COLUMNS - 1 - columnOffset) ||
+                                (i == ROWS - 3 - rowOffset && j == COLUMNS - 2 - columnOffset) ||
+                                (i == ROWS - 3 - rowOffset && j == COLUMNS - 3 - columnOffset);
                 board[i][j] = new LifeButton(isAlive);
                 panel.add(board[i][j]);
 
@@ -45,21 +43,19 @@ public class LifeBoard {
 
                 // initial state of the field
                 board[i][j].setBackground(isAlive ? COLOR_LIFE : COLOR_NO_LIFE);
+                // TODO handle board cell click
 //                board[i][j].addActionListener(lifeActionListener);
             }
         }
     }
 
     public void run() {
+        LOG.info("submitting...");
+//        LifeCalculator lifeCalculator = new LifeCalculator(board, startButton);
+//        lifeCalculator.execute();
+    }
 
-        try (ExecutorService executor = Executors.newCachedThreadPool()) {
-//                executor.submit(() -> );
-            LOG.info("submitting...");
-            LifeCalculator lifeCalculator = new LifeCalculator(board);
-            lifeCalculator.execute();
-
-            LOG.info("Execution submitted");
-        }
-
+    public LifeButton[][] getBoard() {
+        return board;
     }
 }

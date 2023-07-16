@@ -23,7 +23,7 @@ public class LifeButton extends JButton {
         isFutureAlive = futureAlive;
     }
 
-    public void actualizeAliveStatus() {
+    public void updateCurrentAliveStatus() {
         isCurrentlyAlive = isFutureAlive;
     }
 }

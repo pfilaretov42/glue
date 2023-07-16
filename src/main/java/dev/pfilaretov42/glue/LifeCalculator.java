@@ -2,19 +2,26 @@ package dev.pfilaretov42.glue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 
 import static dev.pfilaretov42.glue.GlueApplication.*;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
+@Component
+@Scope(SCOPE_PROTOTYPE)
 public class LifeCalculator extends SwingWorker<Color[][], Void> {
     private static final Logger LOG = LoggerFactory.getLogger(LifeCalculator.class);
 
     private final LifeButton[][] board;
+    private final StartButton startButton;
 
-    public LifeCalculator(LifeButton[][] board) {
-        this.board = board;
+    public LifeCalculator(LifeBoard lifeBoard, StartButton startButton) {
+        this.board = lifeBoard.getBoard();
+        this.startButton = startButton;
     }
 
     @Override
@@ -48,7 +55,7 @@ public class LifeCalculator extends SwingWorker<Color[][], Void> {
 
         for (LifeButton[] buttons : board) {
             for (LifeButton button : buttons) {
-                button.actualizeAliveStatus();
+                button.updateCurrentAliveStatus();
             }
         }
 
@@ -66,6 +73,8 @@ public class LifeCalculator extends SwingWorker<Color[][], Void> {
                     board[i][j].setBackground(colors[i][j]);
                 }
             }
+
+            startButton.doClick();
         } catch (Exception e) {
             e.printStackTrace();
         }
