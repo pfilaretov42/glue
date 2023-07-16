@@ -1,21 +1,21 @@
 package dev.pfilaretov42.glue;
 
+import dev.pfilaretov42.glue.config.GlueProperties;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import javax.swing.*;
 import java.awt.*;
 
 @SpringBootApplication
+@EnableConfigurationProperties(GlueProperties.class)
 public class GlueApplication implements CommandLineRunner {
 
     // TODO - move constants?
     public static final Color COLOR_LIFE = Color.ORANGE;
     public static final Color COLOR_NO_LIFE = Color.LIGHT_GRAY;
-    public static final int ROWS = 130;
-    public static final int COLUMNS = 160;
-    public static final int WINDOW_SIZE = 1000;
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(GlueApplication.class).headless(false).run(args);
@@ -24,19 +24,25 @@ public class GlueApplication implements CommandLineRunner {
     private final BoardTextArea boardTextArea;
     private final StartButton startButton;
     private final HiddenContinueButton hiddenContinueButton;
+    private final GlueProperties glueProperties;
 
     public GlueApplication(
-            BoardTextArea boardTextArea, StartButton startButton, HiddenContinueButton hiddenContinueButton) {
+            BoardTextArea boardTextArea,
+            StartButton startButton,
+            HiddenContinueButton hiddenContinueButton,
+            GlueProperties glueProperties
+    ) {
         this.boardTextArea = boardTextArea;
         this.startButton = startButton;
         this.hiddenContinueButton = hiddenContinueButton;
+        this.glueProperties = glueProperties;
     }
 
     @Override
     public void run(String... args) {
         JFrame frame = new JFrame("The Game of Life, the Universe, and Everything");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(WINDOW_SIZE, WINDOW_SIZE);
+        frame.setSize(glueProperties.window().width(), glueProperties.window().height());
         frame.getContentPane().setBackground(Color.CYAN);
         frame.setLayout(new BorderLayout());
         frame.setResizable(false);
@@ -47,7 +53,7 @@ public class GlueApplication implements CommandLineRunner {
 
         // controls
         JPanel controlPanel = new JPanel(new GridLayout(1, 3));
-        controlPanel.setBounds(0, 0, WINDOW_SIZE, 100);
+        controlPanel.setBounds(0, 0, glueProperties.window().width(), 100);
 
         controlPanel.add(hiddenContinueButton);
         controlPanel.add(startButton);

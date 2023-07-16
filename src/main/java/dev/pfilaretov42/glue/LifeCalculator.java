@@ -1,21 +1,25 @@
 package dev.pfilaretov42.glue;
 
+import dev.pfilaretov42.glue.config.GlueProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import java.awt.*;
-
-import static dev.pfilaretov42.glue.GlueApplication.*;
 
 public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private static final Logger LOG = LoggerFactory.getLogger(LifeCalculator.class);
 
     private final Cell[][] board;
     private final BoardTextArea boardTextArea;
+    private final GlueProperties properties;
+    private final int rows;
+    private final int columns;
 
-    protected LifeCalculator(LifeBoard lifeBoard, BoardTextArea boardTextArea) {
+    protected LifeCalculator(LifeBoard lifeBoard, BoardTextArea boardTextArea, GlueProperties properties) {
         this.board = lifeBoard.getBoard();
+        this.properties = properties;
+        rows = properties.board().rows();
+        columns = properties.board().columns();
         this.boardTextArea = boardTextArea;
     }
 
@@ -23,21 +27,20 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     protected Cell[][] doInBackground() throws InterruptedException {
         // TODO - lock/synchronise field access?
 
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
                 int liveNeighboursCount = countLiveNeighbours(i, j);
                 updateFutureCellStatus(i, j, liveNeighboursCount);
             }
         }
 
-        for (Cell[] rows : board) {
-            for (Cell cell : rows) {
+        for (Cell[] cellRows : board) {
+            for (Cell cell : cellRows) {
                 cell.updateCurrentAliveStatus();
             }
         }
 
-        // TODO - move value to properties - initial speed
-        Thread.sleep(0);
+        Thread.sleep(properties.calculation().delay());
 
         return board;
     }
@@ -81,7 +84,7 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
             if (board[i - 1][j].isCurrentlyAlive()) {
                 liveNeighboursCount++;
             }
-            if (j < COLUMNS - 1 && board[i - 1][j + 1].isCurrentlyAlive()) {
+            if (j < columns - 1 && board[i - 1][j + 1].isCurrentlyAlive()) {
                 liveNeighboursCount++;
             }
         }
@@ -89,17 +92,17 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
             if (board[i][j - 1].isCurrentlyAlive()) {
                 liveNeighboursCount++;
             }
-            if (i < ROWS - 1 && board[i + 1][j - 1].isCurrentlyAlive()) {
+            if (i < rows - 1 && board[i + 1][j - 1].isCurrentlyAlive()) {
                 liveNeighboursCount++;
             }
         }
-        if (j < COLUMNS - 1 && board[i][j + 1].isCurrentlyAlive()) {
+        if (j < columns - 1 && board[i][j + 1].isCurrentlyAlive()) {
             liveNeighboursCount++;
         }
-        if (i < ROWS - 1 && board[i + 1][j].isCurrentlyAlive()) {
+        if (i < rows - 1 && board[i + 1][j].isCurrentlyAlive()) {
             liveNeighboursCount++;
         }
-        if (i < ROWS - 1 && j < COLUMNS - 1 && board[i + 1][j + 1].isCurrentlyAlive()) {
+        if (i < rows - 1 && j < columns - 1 && board[i + 1][j + 1].isCurrentlyAlive()) {
             liveNeighboursCount++;
         }
         return liveNeighboursCount;

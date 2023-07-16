@@ -1,0 +1,10 @@
+glue:
+  window:
+    height: 1030
+    width: 1700
+  board:
+    rows: 135
+    columns: 270
+    font-size: 5
+  calculation:
+    delay: 0

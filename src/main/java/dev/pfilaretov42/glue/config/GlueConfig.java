@@ -14,8 +14,12 @@ public class GlueConfig {
     @Bean
     @Scope(SCOPE_PROTOTYPE)
     public LifeCalculator lifeCalculator(
-            LifeBoard lifeBoard, BoardTextArea boardTextArea, StartActionListener startActionListener) {
-        return new LifeCalculator(lifeBoard, boardTextArea) {
+            LifeBoard lifeBoard,
+            BoardTextArea boardTextArea,
+            StartActionListener startActionListener,
+            GlueProperties properties
+    ) {
+        return new LifeCalculator(lifeBoard, boardTextArea, properties) {
             @Override
             protected JButton getContinueButton() {
                 return hiddenContinueButton(startActionListener);
@@ -24,11 +28,15 @@ public class GlueConfig {
     }
 
     @Bean
-    public StartActionListener startActionListener(LifeBoard lifeBoard, BoardTextArea boardTextArea) {
+    public StartActionListener startActionListener(
+            LifeBoard lifeBoard,
+            BoardTextArea boardTextArea,
+            GlueProperties properties
+    ) {
         return new StartActionListener() {
             @Override
             protected LifeCalculator getLifeCalculator() {
-                return lifeCalculator(lifeBoard, boardTextArea, this);
+                return lifeCalculator(lifeBoard, boardTextArea, this, properties);
             }
         };
     }
