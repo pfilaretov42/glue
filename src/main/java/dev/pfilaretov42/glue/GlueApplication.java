@@ -22,7 +22,7 @@ public class GlueApplication implements CommandLineRunner {
     }
 
     @Autowired
-    private LifeField lifeField;
+    private LifeBoard lifeBoard;
 
     @Autowired
     private StartActionListener startActionListener;
@@ -38,7 +38,7 @@ public class GlueApplication implements CommandLineRunner {
 
         // field
         JPanel fieldPanel = new JPanel(new GridLayout(ROWS, COLUMNS, 3, 3));
-        lifeField.init(fieldPanel);
+        lifeBoard.init(fieldPanel);
 
         // controls
         JPanel controlPanel = new JPanel(new GridLayout(1, 3));

@@ -8,16 +8,16 @@ import java.awt.event.ActionListener;
 
 @Component
 public class StartActionListener implements ActionListener {
-    private final LifeField lifeField;
+    private final LifeBoard lifeBoard;
 
-    public StartActionListener(LifeField lifeField) {
-        this.lifeField = lifeField;
+    public StartActionListener(LifeBoard lifeBoard) {
+        this.lifeBoard = lifeBoard;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof JButton) {
-            lifeField.run();
+            lifeBoard.run();
         }
     }
 }
