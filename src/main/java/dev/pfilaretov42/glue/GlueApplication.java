@@ -14,8 +14,9 @@ public class GlueApplication implements CommandLineRunner {
     // TODO - move constants?
     public static final Color COLOR_LIFE = Color.ORANGE;
     public static final Color COLOR_NO_LIFE = Color.LIGHT_GRAY;
-    public static final int ROWS = 10;
-    public static final int COLUMNS = 10;
+    public static final int ROWS = 20;
+    public static final int COLUMNS = 20;
+    public static final int WINDOW_SIZE = 1000;
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(GlueApplication.class).headless(false).run(args);
@@ -31,7 +32,7 @@ public class GlueApplication implements CommandLineRunner {
     public void run(String... args) {
         JFrame frame = new JFrame("The Game of Life, the Universe, and Everything");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
+        frame.setSize(WINDOW_SIZE, WINDOW_SIZE);
         frame.getContentPane().setBackground(Color.CYAN);
         frame.setLayout(new BorderLayout());
         frame.setResizable(false);
@@ -42,7 +43,7 @@ public class GlueApplication implements CommandLineRunner {
 
         // controls
         JPanel controlPanel = new JPanel(new GridLayout(1, 3));
-        controlPanel.setBounds(0, 0, 800, 100);
+        controlPanel.setBounds(0, 0, WINDOW_SIZE, 100);
 
         JButton startButton = new JButton();
         controlPanel.add(startButton);

@@ -16,7 +16,7 @@ public class LifeBoard {
     private static final Logger LOG = LoggerFactory.getLogger(LifeBoard.class);
 
     private final LifeActionListener lifeActionListener;
-    private final LifeButton[][] field = new LifeButton[ROWS][COLUMNS];
+    private final LifeButton[][] board = new LifeButton[ROWS][COLUMNS];
 
     public LifeBoard(LifeActionListener lifeActionListener) {
         this.lifeActionListener = lifeActionListener;
@@ -26,34 +26,30 @@ public class LifeBoard {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
 
-                field[i][j] = new LifeButton();
-                panel.add(field[i][j]);
+                board[i][j] = new LifeButton();
+                panel.add(board[i][j]);
 
-                field[i][j].setFocusable(false);
+                board[i][j].setFocusable(false);
                 // this is how background is set:
-                field[i][j].setOpaque(true);
-                field[i][j].setBorderPainted(false);
+                board[i][j].setOpaque(true);
+                board[i][j].setBorderPainted(false);
 
                 // initial state of the field
                 boolean isAlive = i == j && i > 2 && i < 7;
-                field[i][j].setAlive(isAlive);
-                field[i][j].setBackground(isAlive ? COLOR_LIFE : COLOR_NO_LIFE);
-                field[i][j].addActionListener(lifeActionListener);
+                board[i][j].setAlive(isAlive);
+                board[i][j].setBackground(isAlive ? COLOR_LIFE : COLOR_NO_LIFE);
+                board[i][j].addActionListener(lifeActionListener);
             }
         }
     }
 
-    @SuppressWarnings("java:S2189")
     public void run() {
 
         try (ExecutorService executor = Executors.newCachedThreadPool()) {
-            LOG.info("submitting...");
 //                executor.submit(() -> );
-            for (int i = 0; i < ROWS; i++) {
-                for (int j = 0; j < COLUMNS; j++) {
-                    new LifeCalculator(field[i][j]).execute();
-                }
-            }
+            LOG.info("submitting...");
+            LifeCalculator lifeCalculator = new LifeCalculator(board);
+            lifeCalculator.execute();
 
             LOG.info("Execution submitted");
         }

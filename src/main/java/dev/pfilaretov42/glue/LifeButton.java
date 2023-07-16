@@ -14,8 +14,7 @@ public class LifeButton extends JButton {
     }
 
     public boolean flipAlive() {
-        boolean tmp = isAlive;
         isAlive = !isAlive;
-        return tmp;
+        return isAlive;
     }
 }
