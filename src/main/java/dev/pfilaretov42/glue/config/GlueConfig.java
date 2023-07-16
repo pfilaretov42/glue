@@ -7,19 +7,29 @@ import org.springframework.context.annotation.Scope;
 
 import javax.swing.*;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Configuration
 public class GlueConfig {
+
+    @Bean
+    public ExecutorService executor() {
+        return Executors.newCachedThreadPool();
+    }
+
     @Bean
     @Scope(SCOPE_PROTOTYPE)
     public LifeCalculator lifeCalculator(
             LifeBoard lifeBoard,
             BoardTextArea boardTextArea,
             StartActionListener startActionListener,
-            GlueProperties properties
+            GlueProperties properties,
+            ExecutorService executor
     ) {
-        return new LifeCalculator(lifeBoard, boardTextArea, properties) {
+        return new LifeCalculator(lifeBoard, boardTextArea, properties, executor) {
             @Override
             protected JButton getContinueButton() {
                 return hiddenContinueButton(startActionListener);
@@ -31,12 +41,13 @@ public class GlueConfig {
     public StartActionListener startActionListener(
             LifeBoard lifeBoard,
             BoardTextArea boardTextArea,
-            GlueProperties properties
+            GlueProperties properties,
+            ExecutorService executor
     ) {
         return new StartActionListener() {
             @Override
             protected LifeCalculator getLifeCalculator() {
-                return lifeCalculator(lifeBoard, boardTextArea, this, properties);
+                return lifeCalculator(lifeBoard, boardTextArea, this, properties, executor);
             }
         };
     }

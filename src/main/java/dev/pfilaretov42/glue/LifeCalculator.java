@@ -1,10 +1,16 @@
 package dev.pfilaretov42.glue;
 
 import dev.pfilaretov42.glue.config.GlueProperties;
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private static final Logger LOG = LoggerFactory.getLogger(LifeCalculator.class);
@@ -14,25 +20,65 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private final GlueProperties properties;
     private final int rows;
     private final int columns;
+    private final ExecutorService executor;
 
-    protected LifeCalculator(LifeBoard lifeBoard, BoardTextArea boardTextArea, GlueProperties properties) {
+    protected LifeCalculator(
+            LifeBoard lifeBoard,
+            BoardTextArea boardTextArea,
+            GlueProperties properties,
+            ExecutorService executor
+    ) {
         this.board = lifeBoard.getBoard();
         this.properties = properties;
         rows = properties.board().rows();
         columns = properties.board().columns();
         this.boardTextArea = boardTextArea;
+        this.executor = executor;
+    }
+
+    @PreDestroy
+    public void destroy() {
+        executor.shutdownNow();
     }
 
     @Override
     protected Cell[][] doInBackground() throws InterruptedException {
         // TODO - lock/synchronise field access?
 
+
+        List<CompletableFuture<Object>> futures = new ArrayList<>();
+//        LOG.info("Submitting futures...");
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                int liveNeighboursCount = countLiveNeighbours(i, j);
-                updateFutureCellStatus(i, j, liveNeighboursCount);
+                int k = i;
+                int m = j;
+
+                futures.add(CompletableFuture.supplyAsync(() -> {
+                    updateFutureCellStatus(k, m, countLiveNeighbours(k, m));
+                    // If we sleep here for long enough, the program fails with
+                    // [6.389s][warning][os,thread] Failed to start thread "Unknown thread" - pthread_create failed (EAGAIN) for attributes: stacksize: 1024k, guardsize: 4k, detached.
+                    // [6.389s][warning][os,thread] Failed to start the native thread for java.lang.Thread "pool-2-thread-4044"
+                    // java.util.concurrent.ExecutionException: java.lang.OutOfMemoryError: unable to create native thread
+//                    try {
+//                        Thread.sleep(5000);
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+                    return null;
+                }, executor));
             }
         }
+
+        LOG.info("pool: size={}, core={}, active={}, largest={}",
+                ((ThreadPoolExecutor) executor).getPoolSize(),
+                ((ThreadPoolExecutor) executor).getCorePoolSize(),
+                ((ThreadPoolExecutor) executor).getActiveCount(),
+                ((ThreadPoolExecutor) executor).getLargestPoolSize()
+        );
+
+//        LOG.info("Waiting for calculations to complete...");
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+//        LOG.info("Calculations completed");
 
         for (Cell[] cellRows : board) {
             for (Cell cell : cellRows) {
