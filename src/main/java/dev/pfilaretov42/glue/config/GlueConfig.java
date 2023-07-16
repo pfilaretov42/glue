@@ -1,12 +1,11 @@
 package dev.pfilaretov42.glue.config;
 
-import dev.pfilaretov42.glue.LifeBoard;
-import dev.pfilaretov42.glue.LifeCalculator;
-import dev.pfilaretov42.glue.StartActionListener;
-import dev.pfilaretov42.glue.StartButton;
+import dev.pfilaretov42.glue.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+
+import javax.swing.*;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
@@ -17,8 +16,8 @@ public class GlueConfig {
     public LifeCalculator lifeCalculator(LifeBoard lifeBoard, StartActionListener startActionListener) {
         return new LifeCalculator(lifeBoard) {
             @Override
-            protected StartButton getStartButton() {
-                return startButton(startActionListener);
+            protected JButton getContinueButton() {
+                return hiddenContinueButton(startActionListener);
             }
         };
     }
@@ -36,5 +35,10 @@ public class GlueConfig {
     @Bean
     public StartButton startButton(StartActionListener startActionListener) {
         return new StartButton(startActionListener);
+    }
+
+    @Bean
+    public HiddenContinueButton hiddenContinueButton(StartActionListener startActionListener) {
+        return new HiddenContinueButton(startActionListener);
     }
 }

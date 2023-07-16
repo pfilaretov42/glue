@@ -14,12 +14,11 @@ public abstract class LifeCalculator extends SwingWorker<Color[][], Void> {
     private final LifeButton[][] board;
 
     protected LifeCalculator(LifeBoard lifeBoard) {
-        LOG.info("LifeCalculator created");
         this.board = lifeBoard.getBoard();
     }
 
     @Override
-    protected Color[][] doInBackground() {
+    protected Color[][] doInBackground() throws InterruptedException {
         // TODO - lock/synchronise field access?
 
         Color[][] colors = new Color[ROWS][COLUMNS];
@@ -53,6 +52,9 @@ public abstract class LifeCalculator extends SwingWorker<Color[][], Void> {
             }
         }
 
+        // TODO - move 500 to properties - initial speed
+        Thread.sleep(500);
+
         return colors;
     }
 
@@ -68,13 +70,13 @@ public abstract class LifeCalculator extends SwingWorker<Color[][], Void> {
                 }
             }
 
-            getStartButton().doClick();
+            getContinueButton().doClick();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    protected abstract StartButton getStartButton();
+    protected abstract JButton getContinueButton();
 
     private int countLiveNeighbours(int i, int j) {
         int liveNeighboursCount = 0;

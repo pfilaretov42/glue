@@ -1,6 +1,5 @@
 package dev.pfilaretov42.glue;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -22,11 +21,15 @@ public class GlueApplication implements CommandLineRunner {
         new SpringApplicationBuilder(GlueApplication.class).headless(false).run(args);
     }
 
-    @Autowired
-    private LifeBoard lifeBoard;
+    private final LifeBoard lifeBoard;
+    private final StartButton startButton;
+    private final HiddenContinueButton hiddenContinueButton;
 
-    @Autowired
-    private StartButton startButton;
+    public GlueApplication(LifeBoard lifeBoard, StartButton startButton, HiddenContinueButton hiddenContinueButton) {
+        this.lifeBoard = lifeBoard;
+        this.startButton = startButton;
+        this.hiddenContinueButton = hiddenContinueButton;
+    }
 
     @Override
     public void run(String... args) {
@@ -45,6 +48,7 @@ public class GlueApplication implements CommandLineRunner {
         JPanel controlPanel = new JPanel(new GridLayout(1, 3));
         controlPanel.setBounds(0, 0, WINDOW_SIZE, 100);
 
+        controlPanel.add(hiddenContinueButton);
         controlPanel.add(startButton);
 
         JButton stopButton = new JButton();
