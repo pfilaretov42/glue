@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Random;
+
 @Component
 public class LifeBoard {
 
@@ -17,18 +19,10 @@ public class LifeBoard {
         int columns = properties.board().columns();
 
         board = new Cell[rows][columns];
+        Random random = new Random();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                // start with glider
-                int rowOffset = 0;
-                int columnOffset = 0;
-                boolean isAlive =
-                        (i == rows - 1 - rowOffset && j == columns - 2 - columnOffset) ||
-                                (i == rows - 2 - rowOffset && j == columns - 3 - columnOffset) ||
-                                (i == rows - 3 - rowOffset && j == columns - 1 - columnOffset) ||
-                                (i == rows - 3 - rowOffset && j == columns - 2 - columnOffset) ||
-                                (i == rows - 3 - rowOffset && j == columns - 3 - columnOffset);
-                board[i][j] = new Cell(isAlive);
+                board[i][j] = new Cell(random.nextBoolean());
             }
         }
     }

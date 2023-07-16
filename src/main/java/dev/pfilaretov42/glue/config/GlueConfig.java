@@ -15,9 +15,11 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 @Configuration
 public class GlueConfig {
 
+    // TODO - configure via properties, whether to create executor or not and which type of executor
     @Bean
     public ExecutorService executor() {
-        return Executors.newCachedThreadPool();
+        return Executors.newVirtualThreadPerTaskExecutor();
+//        return Executors.newCachedThreadPool();
     }
 
     @Bean

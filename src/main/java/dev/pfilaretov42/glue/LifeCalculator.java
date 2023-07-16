@@ -45,40 +45,39 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     protected Cell[][] doInBackground() throws InterruptedException {
         // TODO - lock/synchronise field access?
 
-
         List<CompletableFuture<Object>> futures = new ArrayList<>();
-//        LOG.info("Submitting futures...");
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 int k = i;
                 int m = j;
 
+                // strategy 1: calculate all cells in a single thread
+//                updateFutureCellStatus(k, m, countLiveNeighbours(k, m));
+
+                // strategy 2: calculate every cell in a separate thread from thread pool
                 futures.add(CompletableFuture.supplyAsync(() -> {
                     updateFutureCellStatus(k, m, countLiveNeighbours(k, m));
-                    // If we sleep here for long enough, the program fails with
+
+                    // If we have a long calculation here (sleep) and use cached thread pool, the program fails with
                     // [6.389s][warning][os,thread] Failed to start thread "Unknown thread" - pthread_create failed (EAGAIN) for attributes: stacksize: 1024k, guardsize: 4k, detached.
                     // [6.389s][warning][os,thread] Failed to start the native thread for java.lang.Thread "pool-2-thread-4044"
                     // java.util.concurrent.ExecutionException: java.lang.OutOfMemoryError: unable to create native thread
-//                    try {
-//                        Thread.sleep(5000);
-//                    } catch (InterruptedException e) {
-//                        throw new RuntimeException(e);
-//                    }
+                    // BUT, it's fine with virtual thread
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
                     return null;
                 }, executor));
             }
         }
 
-        LOG.info("pool: size={}, core={}, active={}, largest={}",
-                ((ThreadPoolExecutor) executor).getPoolSize(),
-                ((ThreadPoolExecutor) executor).getCorePoolSize(),
-                ((ThreadPoolExecutor) executor).getActiveCount(),
-                ((ThreadPoolExecutor) executor).getLargestPoolSize()
-        );
+//        LOG.info("largest pool size: {}", ((ThreadPoolExecutor) executor).getLargestPoolSize());
+//        LOG.info("largest pool size: {}", ((ThreadContainer) executor).getLargestPoolSize());
 
-//        LOG.info("Waiting for calculations to complete...");
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-//        LOG.info("Calculations completed");
 
         for (Cell[] cellRows : board) {
             for (Cell cell : cellRows) {
