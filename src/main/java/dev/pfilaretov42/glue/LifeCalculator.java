@@ -19,7 +19,6 @@ public class LifeCalculator extends SwingWorker<Color[][], Void> {
 
     @Override
     protected Color[][] doInBackground() {
-        LOG.info("doInBackground()");
         // TODO - lock/synchronise field access?
 
         Color[][] colors = new Color[ROWS][COLUMNS];
@@ -56,6 +55,22 @@ public class LifeCalculator extends SwingWorker<Color[][], Void> {
         return colors;
     }
 
+    @Override
+    protected void done() {
+        try {
+            // TODO - move set background to LifeButton class
+
+            Color[][] colors = get();
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLUMNS; j++) {
+                    board[i][j].setBackground(colors[i][j]);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private int countLiveNeighbours(int i, int j) {
         int liveNeighboursCount = 0;
         if (i > 0) {
@@ -87,23 +102,5 @@ public class LifeCalculator extends SwingWorker<Color[][], Void> {
             liveNeighboursCount++;
         }
         return liveNeighboursCount;
-    }
-
-    @Override
-    protected void done() {
-        try {
-            // TODO - move set background to LifeButton class
-
-            LOG.info("done()");
-
-            Color[][] colors = get();
-            for (int i = 0; i < ROWS; i++) {
-                for (int j = 0; j < COLUMNS; j++) {
-                    board[i][j].setBackground(colors[i][j]);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
