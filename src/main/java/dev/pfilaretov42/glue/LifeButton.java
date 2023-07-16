@@ -3,18 +3,27 @@ package dev.pfilaretov42.glue;
 import javax.swing.*;
 
 public class LifeButton extends JButton {
-    private boolean isAlive;
+    private boolean isCurrentlyAlive;
+    private boolean isFutureAlive;
 
-    public boolean isAlive() {
-        return isAlive;
+    public LifeButton(boolean isCurrentlyAlive) {
+        this.isCurrentlyAlive = isCurrentlyAlive;
+        isFutureAlive = isCurrentlyAlive;
     }
 
-    public void setAlive(boolean alive) {
-        isAlive = alive;
+    public boolean isCurrentlyAlive() {
+        return isCurrentlyAlive;
     }
 
-    public boolean flipAlive() {
-        isAlive = !isAlive;
-        return isAlive;
+    public boolean isFutureAlive() {
+        return isFutureAlive;
+    }
+
+    public void setFutureAlive(boolean futureAlive) {
+        isFutureAlive = futureAlive;
+    }
+
+    public void actualizeAliveStatus() {
+        isCurrentlyAlive = isFutureAlive;
     }
 }

@@ -26,7 +26,16 @@ public class LifeBoard {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
 
-                board[i][j] = new LifeButton();
+                // start with glider
+                int rowOffset = 5;
+                int columnOffset = 5;
+                boolean isAlive =
+                        (i == ROWS - 1 - rowOffset && j == COLUMNS - 2 - columnOffset) ||
+                        (i == ROWS - 2 - rowOffset && j == COLUMNS - 3 - columnOffset) ||
+                        (i == ROWS - 3 - rowOffset && j == COLUMNS - 1 - columnOffset) ||
+                        (i == ROWS - 3 - rowOffset && j == COLUMNS - 2 - columnOffset) ||
+                        (i == ROWS - 3 - rowOffset && j == COLUMNS - 3 - columnOffset);
+                board[i][j] = new LifeButton(isAlive);
                 panel.add(board[i][j]);
 
                 board[i][j].setFocusable(false);
@@ -35,10 +44,8 @@ public class LifeBoard {
                 board[i][j].setBorderPainted(false);
 
                 // initial state of the field
-                boolean isAlive = i == j && i > 2 && i < 7;
-                board[i][j].setAlive(isAlive);
                 board[i][j].setBackground(isAlive ? COLOR_LIFE : COLOR_NO_LIFE);
-                board[i][j].addActionListener(lifeActionListener);
+//                board[i][j].addActionListener(lifeActionListener);
             }
         }
     }
