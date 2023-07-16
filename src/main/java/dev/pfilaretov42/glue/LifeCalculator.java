@@ -36,6 +36,7 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
         this.executor = executor;
     }
 
+    // TODO - move to separate class for executor bean and destroy executor there
     @PreDestroy
     public void destroy() {
         executor.shutdownNow();
@@ -64,7 +65,7 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
                     // java.util.concurrent.ExecutionException: java.lang.OutOfMemoryError: unable to create native thread
                     // BUT, it's fine with virtual thread
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(properties.calculation().cellDelay());
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -85,7 +86,7 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
             }
         }
 
-        Thread.sleep(properties.calculation().delay());
+        Thread.sleep(properties.calculation().boardDelay());
 
         return board;
     }

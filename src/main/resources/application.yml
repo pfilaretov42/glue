@@ -1,10 +1,15 @@
+# TODO - add profiles:
+#  - calculate in a single thread
+#  - calculate with a pool of threads
+#  - calculate with a pool of virtual threads
 glue:
   window:
     height: 1030
     width: 1700
   board:
-    rows: 135
-    columns: 270
-    font-size: 5
+    rows: 100 # 400
+    columns: 100 # 1000
+    font-size: 2
   calculation:
-    delay: 0
+    board-delay: 0
+    cell-delay: 1

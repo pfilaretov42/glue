@@ -11,6 +11,6 @@ public record GlueProperties(Window window, Board board, Calculation calculation
     public record Board(int rows, int columns, int fontSize) {
     }
 
-    public record Calculation(int delay) {
+    public record Calculation(int boardDelay, int cellDelay) {
     }
 }
