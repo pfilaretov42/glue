@@ -2,26 +2,20 @@ package dev.pfilaretov42.glue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 
 import static dev.pfilaretov42.glue.GlueApplication.*;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-@Component
-@Scope(SCOPE_PROTOTYPE)
-public class LifeCalculator extends SwingWorker<Color[][], Void> {
+public abstract class LifeCalculator extends SwingWorker<Color[][], Void> {
     private static final Logger LOG = LoggerFactory.getLogger(LifeCalculator.class);
 
     private final LifeButton[][] board;
-    private final StartButton startButton;
 
-    public LifeCalculator(LifeBoard lifeBoard, StartButton startButton) {
+    protected LifeCalculator(LifeBoard lifeBoard) {
+        LOG.info("LifeCalculator created");
         this.board = lifeBoard.getBoard();
-        this.startButton = startButton;
     }
 
     @Override
@@ -74,11 +68,13 @@ public class LifeCalculator extends SwingWorker<Color[][], Void> {
                 }
             }
 
-            startButton.doClick();
+            getStartButton().doClick();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    protected abstract StartButton getStartButton();
 
     private int countLiveNeighbours(int i, int j) {
         int liveNeighboursCount = 0;
