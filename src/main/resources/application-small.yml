@@ -1,0 +1,5 @@
+glue:
+  board:
+    rows: 30
+    columns: 55
+    font-size: 24

@@ -7,9 +7,9 @@ glue:
     height: 1030
     width: 1700
   board:
-    rows: 100 # 400
-    columns: 100 # 1000
+    rows: 320
+    columns: 840
     font-size: 2
   calculation:
     board-delay: 0
-    cell-delay: 1
+    cell-delay: 0
