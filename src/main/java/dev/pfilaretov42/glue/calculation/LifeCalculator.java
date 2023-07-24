@@ -1,8 +1,9 @@
-package dev.pfilaretov42.glue;
+package dev.pfilaretov42.glue.calculation;
 
-import dev.pfilaretov42.glue.calculation.CalculationStrategy;
+import dev.pfilaretov42.glue.BoardTextArea;
+import dev.pfilaretov42.glue.Cell;
+import dev.pfilaretov42.glue.LifeBoard;
 import dev.pfilaretov42.glue.config.GlueProperties;
-import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +11,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 
 public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private static final Logger LOG = LoggerFactory.getLogger(LifeCalculator.class);
@@ -20,28 +20,19 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private final GlueProperties properties;
     private final int rows;
     private final int columns;
-    private final ExecutorService executor;
     private final CalculationStrategy calculationStrategy;
 
     protected LifeCalculator(
             LifeBoard lifeBoard,
             BoardTextArea boardTextArea,
             GlueProperties properties,
-            ExecutorService executor,
             CalculationStrategy calculationStrategy) {
         this.board = lifeBoard.getBoard();
         this.properties = properties;
         rows = properties.board().rows();
         columns = properties.board().columns();
         this.boardTextArea = boardTextArea;
-        this.executor = executor;
         this.calculationStrategy = calculationStrategy;
-    }
-
-    // TODO - move to separate class for executor bean and destroy executor there
-    @PreDestroy
-    public void destroy() {
-        executor.shutdownNow();
     }
 
     @Override

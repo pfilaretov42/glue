@@ -1,5 +1,7 @@
 package dev.pfilaretov42.glue;
 
+import dev.pfilaretov42.glue.calculation.LifeCalculator;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
