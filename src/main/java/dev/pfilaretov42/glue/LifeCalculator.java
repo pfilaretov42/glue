@@ -1,5 +1,6 @@
 package dev.pfilaretov42.glue;
 
+import dev.pfilaretov42.glue.calculation.CalculationStrategy;
 import dev.pfilaretov42.glue.config.GlueProperties;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private static final Logger LOG = LoggerFactory.getLogger(LifeCalculator.class);
@@ -21,19 +21,21 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private final int rows;
     private final int columns;
     private final ExecutorService executor;
+    private final CalculationStrategy calculationStrategy;
 
     protected LifeCalculator(
             LifeBoard lifeBoard,
             BoardTextArea boardTextArea,
             GlueProperties properties,
-            ExecutorService executor
-    ) {
+            ExecutorService executor,
+            CalculationStrategy calculationStrategy) {
         this.board = lifeBoard.getBoard();
         this.properties = properties;
         rows = properties.board().rows();
         columns = properties.board().columns();
         this.boardTextArea = boardTextArea;
         this.executor = executor;
+        this.calculationStrategy = calculationStrategy;
     }
 
     // TODO - move to separate class for executor bean and destroy executor there
@@ -46,37 +48,30 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     protected Cell[][] doInBackground() throws InterruptedException {
         // TODO - lock/synchronise field access?
 
-        List<CompletableFuture<Object>> futures = new ArrayList<>();
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 int k = i;
                 int m = j;
 
-                // strategy 1: calculate all cells in a single thread
-//                updateFutureCellStatus(k, m, countLiveNeighbours(k, m));
+                futures.add(
+                        calculationStrategy.calculateCell(() -> {
+                            updateFutureCellStatus(k, m, countLiveNeighbours(k, m));
 
-                // strategy 2: calculate every cell in a separate thread from thread pool
-                futures.add(CompletableFuture.supplyAsync(() -> {
-                    updateFutureCellStatus(k, m, countLiveNeighbours(k, m));
-
-                    // If we have a long calculation here (sleep) and use cached thread pool, the program fails with
-                    // [6.389s][warning][os,thread] Failed to start thread "Unknown thread" - pthread_create failed (EAGAIN) for attributes: stacksize: 1024k, guardsize: 4k, detached.
-                    // [6.389s][warning][os,thread] Failed to start the native thread for java.lang.Thread "pool-2-thread-4044"
-                    // java.util.concurrent.ExecutionException: java.lang.OutOfMemoryError: unable to create native thread
-                    // BUT, it's fine with virtual thread
-                    try {
-                        Thread.sleep(properties.calculation().cellDelay());
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    return null;
-                }, executor));
+                            // If we have a long calculation here (sleep) and use cached thread pool, the program fails with
+                            // [6.389s][warning][os,thread] Failed to start thread "Unknown thread" - pthread_create failed (EAGAIN) for attributes: stacksize: 1024k, guardsize: 4k, detached.
+                            // [6.389s][warning][os,thread] Failed to start the native thread for java.lang.Thread "pool-2-thread-4044"
+                            // java.util.concurrent.ExecutionException: java.lang.OutOfMemoryError: unable to create native thread
+                            // BUT, it's fine with virtual thread
+                            try {
+                                Thread.sleep(properties.calculation().cellDelay());
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+                );
             }
         }
-
-//        LOG.info("largest pool size: {}", ((ThreadPoolExecutor) executor).getLargestPoolSize());
-//        LOG.info("largest pool size: {}", ((ThreadContainer) executor).getLargestPoolSize());
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
