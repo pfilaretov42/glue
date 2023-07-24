@@ -1,7 +1,3 @@
-# TODO - add profiles:
-#  - calculate in a single thread
-#  - calculate with a pool of threads
-#  - calculate with a pool of virtual threads
 glue:
   window:
     height: 1030
