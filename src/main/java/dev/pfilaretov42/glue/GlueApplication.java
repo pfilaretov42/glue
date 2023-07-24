@@ -1,5 +1,8 @@
 package dev.pfilaretov42.glue;
 
+import dev.pfilaretov42.glue.awt.BoardTextArea;
+import dev.pfilaretov42.glue.awt.HiddenContinueButton;
+import dev.pfilaretov42.glue.awt.StartButton;
 import dev.pfilaretov42.glue.config.GlueProperties;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

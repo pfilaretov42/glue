@@ -1,5 +1,7 @@
-package dev.pfilaretov42.glue;
+package dev.pfilaretov42.glue.awt;
 
+import dev.pfilaretov42.glue.model.Cell;
+import dev.pfilaretov42.glue.model.LifeBoard;
 import dev.pfilaretov42.glue.config.GlueProperties;
 import org.springframework.stereotype.Component;
 

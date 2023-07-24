@@ -1,8 +1,8 @@
 package dev.pfilaretov42.glue.calculation;
 
-import dev.pfilaretov42.glue.BoardTextArea;
-import dev.pfilaretov42.glue.Cell;
-import dev.pfilaretov42.glue.LifeBoard;
+import dev.pfilaretov42.glue.awt.BoardTextArea;
+import dev.pfilaretov42.glue.model.Cell;
+import dev.pfilaretov42.glue.model.LifeBoard;
 import dev.pfilaretov42.glue.config.GlueProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

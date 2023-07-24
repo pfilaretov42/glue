@@ -1,4 +1,4 @@
-package dev.pfilaretov42.glue;
+package dev.pfilaretov42.glue.model;
 
 public class Cell {
     private boolean isCurrentlyAlive;

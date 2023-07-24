@@ -1,8 +1,12 @@
 package dev.pfilaretov42.glue.config;
 
-import dev.pfilaretov42.glue.*;
+import dev.pfilaretov42.glue.awt.BoardTextArea;
+import dev.pfilaretov42.glue.awt.HiddenContinueButton;
+import dev.pfilaretov42.glue.awt.StartActionListener;
+import dev.pfilaretov42.glue.awt.StartButton;
 import dev.pfilaretov42.glue.calculation.CalculationStrategy;
 import dev.pfilaretov42.glue.calculation.LifeCalculator;
+import dev.pfilaretov42.glue.model.LifeBoard;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;

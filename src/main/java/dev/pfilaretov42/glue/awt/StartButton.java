@@ -1,4 +1,4 @@
-package dev.pfilaretov42.glue;
+package dev.pfilaretov42.glue.awt;
 
 import javax.swing.*;
 

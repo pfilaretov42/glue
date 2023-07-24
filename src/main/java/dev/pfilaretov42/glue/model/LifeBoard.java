@@ -1,4 +1,4 @@
-package dev.pfilaretov42.glue;
+package dev.pfilaretov42.glue.model;
 
 import dev.pfilaretov42.glue.config.GlueProperties;
 import org.slf4j.Logger;
