@@ -16,10 +16,6 @@ import java.awt.*;
 @EnableConfigurationProperties(GlueProperties.class)
 public class GlueApplication implements CommandLineRunner {
 
-    // TODO - move constants?
-    public static final Color COLOR_LIFE = Color.ORANGE;
-    public static final Color COLOR_NO_LIFE = Color.LIGHT_GRAY;
-
     public static void main(String[] args) {
         new SpringApplicationBuilder(GlueApplication.class).headless(false).run(args);
     }
