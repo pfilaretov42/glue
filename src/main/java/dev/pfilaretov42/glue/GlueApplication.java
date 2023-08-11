@@ -61,12 +61,14 @@ public class GlueApplication implements CommandLineRunner {
         controlPanel.add(stopButton);
         stopButton.setText("Stop");
         // TODO
+        stopButton.setEnabled(false);
 //        stopButton.addActionListener();
 
         JButton resetButton = new JButton();
         controlPanel.add(resetButton);
         resetButton.setText("Reset");
         // TODO
+        resetButton.setEnabled(false);
 //        resetButton.addActionListener();
 
         // add panels
