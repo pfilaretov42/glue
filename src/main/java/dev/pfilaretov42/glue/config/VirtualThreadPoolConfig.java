@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Configuration
-@Profile("virtual-thread-pool")
+@Profile("virtual-threads")
 public class VirtualThreadPoolConfig {
 
     @Bean

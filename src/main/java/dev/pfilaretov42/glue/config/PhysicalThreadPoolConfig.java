@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Configuration
-@Profile("physical-thread-pool")
+@Profile("physical-threads")
 public class PhysicalThreadPoolConfig {
 
     @Bean

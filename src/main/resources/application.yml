@@ -1,3 +1,9 @@
+spring:
+  profiles:
+    group:
+      physical-threads: thread-pool
+      virtual-threads: thread-pool
+
 glue:
   window:
     height: 1030
