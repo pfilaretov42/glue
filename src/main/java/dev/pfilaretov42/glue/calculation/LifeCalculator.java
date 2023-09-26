@@ -1,9 +1,9 @@
 package dev.pfilaretov42.glue.calculation;
 
 import dev.pfilaretov42.glue.awt.BoardTextArea;
+import dev.pfilaretov42.glue.config.GlueProperties;
 import dev.pfilaretov42.glue.model.Cell;
 import dev.pfilaretov42.glue.model.LifeBoard;
-import dev.pfilaretov42.glue.config.GlueProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private static final Logger LOG = LoggerFactory.getLogger(LifeCalculator.class);
+    private static final String ERROR_MESSAGE = "Oops!";
 
     private final Cell[][] board;
     private final BoardTextArea boardTextArea;
@@ -23,10 +24,11 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private final CalculationStrategy calculationStrategy;
 
     protected LifeCalculator(
-            LifeBoard lifeBoard,
-            BoardTextArea boardTextArea,
-            GlueProperties properties,
-            CalculationStrategy calculationStrategy) {
+        LifeBoard lifeBoard,
+        BoardTextArea boardTextArea,
+        GlueProperties properties,
+        CalculationStrategy calculationStrategy
+    ) {
         this.board = lifeBoard.getBoard();
         this.properties = properties;
         rows = properties.board().rows();
@@ -46,20 +48,21 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
                 int m = j;
 
                 futures.add(
-                        calculationStrategy.calculateCell(() -> {
-                            updateFutureCellStatus(k, m, countLiveNeighbours(k, m));
+                    calculationStrategy.calculateCell(() -> {
+                        updateFutureCellStatus(k, m, countLiveNeighbours(k, m));
 
-                            // If we have a long calculation here (sleep) and use cached thread pool, the program fails with
-                            // [6.389s][warning][os,thread] Failed to start thread "Unknown thread" - pthread_create failed (EAGAIN) for attributes: stacksize: 1024k, guardsize: 4k, detached.
-                            // [6.389s][warning][os,thread] Failed to start the native thread for java.lang.Thread "pool-2-thread-4044"
-                            // java.util.concurrent.ExecutionException: java.lang.OutOfMemoryError: unable to create native thread
-                            // BUT, it's fine with virtual thread
-                            try {
-                                Thread.sleep(properties.calculation().cellDelay());
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
-                        })
+                        // If we have a long calculation here (sleep) and use cached thread pool, the program fails with
+                        // [6.389s][warning][os,thread] Failed to start thread "Unknown thread" - pthread_create failed (EAGAIN) for attributes: stacksize: 1024k, guardsize: 4k, detached.
+                        // [6.389s][warning][os,thread] Failed to start the native thread for java.lang.Thread "pool-2-thread-4044"
+                        // java.util.concurrent.ExecutionException: java.lang.OutOfMemoryError: unable to create native thread
+                        // BUT, it's fine with virtual thread
+                        try {
+                            Thread.sleep(properties.calculation().cellDelay());
+                        } catch (InterruptedException e) {
+                            LOG.error(ERROR_MESSAGE, e);
+                            Thread.currentThread().interrupt();
+                        }
+                    })
                 );
             }
         }
@@ -82,10 +85,15 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
         try {
             boardTextArea.updateView(get());
             getContinueButton().doClick();
+        } catch (InterruptedException e) {
+            LOG.error(ERROR_MESSAGE, e);
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(ERROR_MESSAGE, e);
         }
     }
+
+    protected abstract JButton getContinueButton();
 
     private void updateFutureCellStatus(int i, int j, int liveNeighboursCount) {
         /*
@@ -104,8 +112,6 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
             }
         }
     }
-
-    protected abstract JButton getContinueButton();
 
     private int countLiveNeighbours(int i, int j) {
         int liveNeighboursCount = 0;

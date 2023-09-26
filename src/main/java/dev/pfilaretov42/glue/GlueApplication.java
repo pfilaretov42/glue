@@ -8,12 +8,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.swing.*;
 import java.awt.*;
 
 @SpringBootApplication
 @EnableConfigurationProperties(GlueProperties.class)
+@EnableScheduling
 public class GlueApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
