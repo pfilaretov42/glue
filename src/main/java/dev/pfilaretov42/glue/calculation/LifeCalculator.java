@@ -4,10 +4,12 @@ import dev.pfilaretov42.glue.awt.BoardTextArea;
 import dev.pfilaretov42.glue.config.GlueProperties;
 import dev.pfilaretov42.glue.model.Cell;
 import dev.pfilaretov42.glue.model.LifeBoard;
+import dev.pfilaretov42.glue.util.BoardUpdateTimeLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -22,12 +24,14 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
     private final int rows;
     private final int columns;
     private final CalculationStrategy calculationStrategy;
+    private final BoardUpdateTimeLogger boardUpdateTimeLogger;
 
     protected LifeCalculator(
         LifeBoard lifeBoard,
         BoardTextArea boardTextArea,
         GlueProperties properties,
-        CalculationStrategy calculationStrategy
+        CalculationStrategy calculationStrategy,
+        BoardUpdateTimeLogger boardUpdateTimeLogger
     ) {
         this.board = lifeBoard.getBoard();
         this.properties = properties;
@@ -35,11 +39,14 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
         columns = properties.board().columns();
         this.boardTextArea = boardTextArea;
         this.calculationStrategy = calculationStrategy;
+        this.boardUpdateTimeLogger = boardUpdateTimeLogger;
     }
 
     @Override
     protected Cell[][] doInBackground() throws InterruptedException {
         // TODO - lock/synchronise field access?
+
+        long start = System.nanoTime();
 
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
@@ -74,6 +81,8 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
                 cell.updateCurrentAliveStatus();
             }
         }
+
+        boardUpdateTimeLogger.saveBoardUpdateMillis(Duration.ofNanos(System.nanoTime() - start).toMillis());
 
         Thread.sleep(properties.calculation().boardDelay());
 

@@ -7,6 +7,7 @@ import dev.pfilaretov42.glue.awt.StartButton;
 import dev.pfilaretov42.glue.calculation.CalculationStrategy;
 import dev.pfilaretov42.glue.calculation.LifeCalculator;
 import dev.pfilaretov42.glue.model.LifeBoard;
+import dev.pfilaretov42.glue.util.BoardUpdateTimeLogger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -21,13 +22,14 @@ public class GlueConfig {
     @Bean
     @Scope(SCOPE_PROTOTYPE)
     public LifeCalculator lifeCalculator(
-            LifeBoard lifeBoard,
-            BoardTextArea boardTextArea,
-            StartActionListener startActionListener,
-            GlueProperties properties,
-            CalculationStrategy calculationStrategy
+        LifeBoard lifeBoard,
+        BoardTextArea boardTextArea,
+        StartActionListener startActionListener,
+        GlueProperties properties,
+        CalculationStrategy calculationStrategy,
+        BoardUpdateTimeLogger boardUpdateTimeLogger
     ) {
-        return new LifeCalculator(lifeBoard, boardTextArea, properties, calculationStrategy) {
+        return new LifeCalculator(lifeBoard, boardTextArea, properties, calculationStrategy, boardUpdateTimeLogger) {
             @Override
             protected JButton getContinueButton() {
                 return hiddenContinueButton(startActionListener);
@@ -37,16 +39,17 @@ public class GlueConfig {
 
     @Bean
     public StartActionListener startActionListener(
-            LifeBoard lifeBoard,
-            BoardTextArea boardTextArea,
-            GlueProperties properties,
-            CalculationStrategy calculationStrategy
+        LifeBoard lifeBoard,
+        BoardTextArea boardTextArea,
+        GlueProperties properties,
+        CalculationStrategy calculationStrategy,
+        BoardUpdateTimeLogger boardUpdateTimeLogger
     ) {
         return new StartActionListener() {
             @Override
             protected LifeCalculator getLifeCalculator() {
                 return lifeCalculator(
-                        lifeBoard, boardTextArea, this, properties, calculationStrategy);
+                    lifeBoard, boardTextArea, this, properties, calculationStrategy, boardUpdateTimeLogger);
             }
         };
     }
