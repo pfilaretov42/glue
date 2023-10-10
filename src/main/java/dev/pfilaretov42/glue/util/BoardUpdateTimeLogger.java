@@ -16,24 +16,24 @@ public class BoardUpdateTimeLogger {
     public void saveBoardUpdateMillis(long millis) {
         LOG.debug("Saving board update time [millis={}]", millis);
 
-        long newMinMillis;
-        long newMaxMillis;
-        long newTotalMillis;
-        long newUpdatesNumber;
+        long minMillis;
+        long maxMillis;
+        long totalMillis;
+        long updatesNumber;
         if (updatesHolder.totalMillis() + millis > 0) {
-            newMinMillis = Math.min(updatesHolder.minMillis(), millis);
-            newMaxMillis = Math.max(updatesHolder.maxMillis(), millis);
-            newTotalMillis = updatesHolder.totalMillis() + millis;
-            newUpdatesNumber = updatesHolder.updatesNumber() + 1;
+            minMillis = Math.min(updatesHolder.minMillis(), millis);
+            maxMillis = Math.max(updatesHolder.maxMillis(), millis);
+            totalMillis = updatesHolder.totalMillis() + millis;
+            updatesNumber = updatesHolder.updatesNumber() + 1;
         } else {
             LOG.info("Overflowed total millis, resetting");
-            newMinMillis = millis;
-            newMaxMillis = millis;
-            newTotalMillis = millis;
-            newUpdatesNumber = 1;
+            minMillis = millis;
+            maxMillis = millis;
+            totalMillis = millis;
+            updatesNumber = 1;
         }
 
-        updatesHolder = new UpdatesHolder(newMinMillis, newMaxMillis, newTotalMillis, newUpdatesNumber);
+        updatesHolder = new UpdatesHolder(minMillis, maxMillis, totalMillis, updatesNumber);
     }
 
     @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)

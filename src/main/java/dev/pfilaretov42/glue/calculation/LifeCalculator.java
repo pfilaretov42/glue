@@ -44,8 +44,6 @@ public abstract class LifeCalculator extends SwingWorker<Cell[][], Void> {
 
     @Override
     protected Cell[][] doInBackground() throws InterruptedException {
-        // TODO - lock/synchronise field access?
-
         long start = System.nanoTime();
 
         List<CompletableFuture<Void>> futures = new ArrayList<>();
